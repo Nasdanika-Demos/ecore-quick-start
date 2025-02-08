@@ -1,0 +1,6 @@
+container:
+ self: 
+  residents:
+    argument-type: family.Person
+    path: 1
+ other: constituents
