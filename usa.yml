@@ -1,0 +1,18 @@
+Polity:
+    name: USA
+    constituents:
+        - Polity:
+            name: Florida
+            residents:
+                Woman:
+                    name: Jane
+                    id: jane
+                    father: people://joe
+        - Polity:
+            name: Texas    
+            residents:
+                Man:
+                    name: Joe
+                    id: joe
+                    uris: people://joe
+            

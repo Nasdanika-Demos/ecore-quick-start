@@ -1,7 +1,5 @@
 package org.nasdanika.demos.diagrams.mapping.tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -10,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.junit.jupiter.api.Test;
 import org.nasdanika.capability.CapabilityLoader;
@@ -28,6 +27,7 @@ import org.nasdanika.models.family.Man;
 import org.nasdanika.models.family.Person;
 import org.nasdanika.models.family.Polity;
 import org.nasdanika.models.family.Woman;
+import org.nasdanika.ncore.util.NcoreResourceSet;
 
 public class TestEcoreQuickStart {
 	
@@ -138,5 +138,32 @@ public class TestEcoreQuickStart {
 		excelResource.getContents().add(workbook);
 		excelResource.save(null);		
 	}
+		
+	@Test
+	public void testLoadYaml() throws IOException {
+		CapabilityLoader capabilityLoader = new CapabilityLoader();
+		ProgressMonitor progressMonitor = new PrintStreamProgressMonitor();
+		Requirement<ResourceSetRequirement, ResourceSet> requirement = ServiceCapabilityFactory.createRequirement(
+				ResourceSet.class,
+				null,
+				new ResourceSetRequirement(
+						new NcoreResourceSet(), // Need NcoreResourceSet for resolving references 
+						null, 
+						null));		
+		ResourceSet resourceSet = capabilityLoader.loadOne(requirement, progressMonitor);
+		
+		URI resourceURI = URI.createFileURI(new File("usa.yml").getCanonicalPath());
+		Resource resource = resourceSet.getResource(resourceURI, true);
+		Polity usa = (Polity) resource.getContents().get(0);
+		
+		System.out.println(usa.getName());
+		System.out.println(usa.getConstituents().size());		
+
+		// Saving for inspection
+		URI xmiResourceURI = URI.createFileURI(new File("target/usa.xmi").getCanonicalPath());
+		Resource xmiResource = resourceSet.createResource(xmiResourceURI);
+		xmiResource.getContents().add(EcoreUtil.copy(usa));
+		xmiResource.save(null);				
+	}	
 	
 }
