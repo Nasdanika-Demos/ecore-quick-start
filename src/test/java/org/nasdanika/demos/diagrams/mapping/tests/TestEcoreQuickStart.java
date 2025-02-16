@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.nasdanika.capability.CapabilityLoader;
 import org.nasdanika.capability.ServiceCapabilityFactory;
@@ -164,6 +165,63 @@ public class TestEcoreQuickStart {
 		Resource xmiResource = resourceSet.createResource(xmiResourceURI);
 		xmiResource.getContents().add(EcoreUtil.copy(usa));
 		xmiResource.save(null);				
+	}	
+	
+	/**
+	 * Loads a model from a Draw.io diagram, creates an Excel "report".
+	 * @throws IOException
+	 */
+	@Test
+	public void testFromDiagramToBinAndGz() throws IOException {
+		CapabilityLoader capabilityLoader = new CapabilityLoader();
+		ProgressMonitor progressMonitor = new PrintStreamProgressMonitor();
+		Requirement<ResourceSetRequirement, ResourceSet> requirement = ServiceCapabilityFactory.createRequirement(ResourceSet.class);		
+		ResourceSet resourceSet = capabilityLoader.loadOne(requirement, progressMonitor);
+		
+		File diagramFile = new File("diagram.drawio").getCanonicalFile();
+		Resource diagramResource = resourceSet.getResource(URI.createFileURI(diagramFile.getAbsolutePath()), true);		
+
+		URI binURI = URI.createFileURI(new File("target/family.ebin").getAbsolutePath());
+		Resource binResource = resourceSet.createResource(binURI);
+		binResource.getContents().addAll(EcoreUtil.copyAll(diagramResource.getContents()));
+		binResource.save(null);
+		
+		URI gzURI = URI.createFileURI(new File("target/family.egz").getAbsolutePath());
+		Resource gzResource = resourceSet.createResource(gzURI);
+		gzResource.getContents().addAll(EcoreUtil.copyAll(diagramResource.getContents()));
+		gzResource.save(null);				
+	}
+		
+	@Test
+	@Disabled
+	public void testLoadBin() throws IOException {
+		CapabilityLoader capabilityLoader = new CapabilityLoader();
+		ProgressMonitor progressMonitor = new PrintStreamProgressMonitor();
+		Requirement<ResourceSetRequirement, ResourceSet> requirement = ServiceCapabilityFactory.createRequirement(ResourceSet.class);		
+		ResourceSet resourceSet = capabilityLoader.loadOne(requirement, progressMonitor);
+		
+		URI resourceURI = URI.createFileURI(new File("target/family.ebin").getCanonicalPath());
+		Resource resource = resourceSet.getResource(resourceURI, true);
+		Polity usa = (Polity) resource.getContents().get(0);
+		
+		System.out.println(usa.getName());
+		System.out.println(usa.getConstituents().size());		
+	}	
+	
+	@Test
+	@Disabled
+	public void testLoadGz() throws IOException {
+		CapabilityLoader capabilityLoader = new CapabilityLoader();
+		ProgressMonitor progressMonitor = new PrintStreamProgressMonitor();
+		Requirement<ResourceSetRequirement, ResourceSet> requirement = ServiceCapabilityFactory.createRequirement(ResourceSet.class);		
+		ResourceSet resourceSet = capabilityLoader.loadOne(requirement, progressMonitor);
+		
+		URI resourceURI = URI.createFileURI(new File("target/family.egz").getCanonicalPath());
+		Resource resource = resourceSet.getResource(resourceURI, true);
+		Polity usa = (Polity) resource.getContents().get(0);
+		
+		System.out.println(usa.getName());
+		System.out.println(usa.getConstituents().size());		
 	}	
 	
 }
