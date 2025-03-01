@@ -55,12 +55,12 @@
 		<dependency>
 			<groupId>org.nasdanika.models.excel</groupId>
 			<artifactId>model</artifactId>
-			<version>2025.1.0</version>
+			<version>2025.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nasdanika.models.family</groupId>
 			<artifactId>model</artifactId>
-			<version>2025.1.0</version>
+			<version>2025.2.0</version>
 		</dependency>
 	
 		<dependency>
